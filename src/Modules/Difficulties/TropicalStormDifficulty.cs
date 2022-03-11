@@ -1,5 +1,6 @@
 ﻿using R2API;
 using RoR2;
+using System;
 using UnityEngine;
 
 namespace TropicalStorm_Mod
@@ -8,28 +9,36 @@ namespace TropicalStorm_Mod
     {
         public static void CreateDifficulty()
         {
-            initialMult = Config.initialMultiplier.Value;
-            loopIncreaseMult = Config.loopIncreaseMultiplier.Value;
+            initialMult = Math.Max(0f, Config.initialMultiplier.Value);
+            loopIncreaseMult = Math.Max(0f, Config.loopMultiplier.Value);
             string prefix = TropicalStorm_ModPlugin.developerPrefix;
             var nameToken = prefix + "_DIFFICULTY_TROPICALSTORM_NAME";
             var descriptionToken = prefix + "_DIFFICULTY_TROPICALSTORM_DESCRIPTION";
             LanguageAPI.Add(nameToken, "Tropical Storm");
-            string description = "An extremely hard difficulty that rewards longer runs. Become a legend or die trying.\r\n\r\n<style=cStack>>All player stats starts ";
-            if (initialMult < 0)
+            string description = "Configurable difficulty that scales based on the number of loops.\r\n\r\n<style=cStack>>All player stats starts ";
+            if (initialMult < 1f)
             {
-                description += $"decreased by <style=cIsHealth>{100f * initialMult}%</style> and ";
+                description += $"decreased by <style=cIsHealth>{100f * (1 - initialMult)}%</style> and ";
+            }
+            else if (initialMult > 1f)
+            {
+                description += $"increased by <style=cIsHealing>{100f * (initialMult - 1)}%</style> and ";
             }
             else
             {
-                description += $"increased by <style=cIsHealing>{100f * initialMult}%</style> and ";
+                description += $"at their normal values and ";
             }
-            if (loopIncreaseMult < 0)
+            if (loopIncreaseMult < 1f)
             {
-                description += $"decrease by <style=cIsHealth>{100f * loopIncreaseMult}%</style> ";
+                description += $"decrease by <style=cIsHealth>{100f * (1 - loopIncreaseMult)}%</style> ";
+            }
+            else if (loopIncreaseMult > 1f)
+            {
+                description += $"increase by <style=cIsHealing>{100f * (loopIncreaseMult - 1)}%</style> ";
             }
             else
             {
-                description += $"increase by <style=cIsHealing>{100f * loopIncreaseMult}%</style> ";
+                description += $"stay the same ";
             }
             description += "every loop.\r\n>Difficulty scaling: <style=cIsHealth>+75%</style></style>";
             LanguageAPI.Add(descriptionToken, description);
@@ -59,7 +68,7 @@ namespace TropicalStorm_Mod
                 self.teamComponent != null && self.teamComponent.teamIndex == TeamIndex.Player)
             {
                 var loopClearCount = Run.instance.loopClearCount;
-                var multiplier = (1f + initialMult) + (loopClearCount * loopIncreaseMult);
+                var multiplier = initialMult * (float)Math.Pow(loopIncreaseMult, loopClearCount);
                 self.acceleration *= multiplier;
                 self.armor *= multiplier;
                 self.attackSpeed *= multiplier;
@@ -77,7 +86,7 @@ namespace TropicalStorm_Mod
                 sender.teamComponent != null && sender.teamComponent.teamIndex == TeamIndex.Player)
             {
                 var loopClearCount = Run.instance.loopClearCount;
-                var multiplier = (1f + initialMult) + (loopClearCount * loopIncreaseMult);
+                var multiplier = initialMult * (float)Math.Pow(loopIncreaseMult, loopClearCount);
                 args.healthMultAdd *= multiplier;
             };
         }

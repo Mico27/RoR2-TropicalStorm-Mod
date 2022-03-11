@@ -11,28 +11,36 @@ namespace TropicalStorm_Mod
     {
         public static void CreateArtifact()
         {
-            initialMult = Config.initialMultiplier.Value;
-            loopIncreaseMult = Config.loopIncreaseMultiplier.Value;
+            initialMult = Math.Max(0f, Config.initialMultiplier.Value);
+            loopIncreaseMult = Math.Max(0f, Config.loopMultiplier.Value);
             string prefix = TropicalStorm_ModPlugin.developerPrefix;
             var nameToken = prefix + "_ARTIFACT_TROPICALSTORM_NAME";
             var descriptionToken = prefix + "_ARTIFACT_TROPICALSTORM_DESCRIPTION";
             LanguageAPI.Add(nameToken, "Tropical Storm");
             string description = "All player stats starts ";
-            if (initialMult < 0)
+            if (initialMult < 1f)
             {
-                description += $"decreased by <style=cIsHealth>{100f * initialMult}%</style> and ";
+                description += $"decreased by <style=cIsHealth>{100f * (1 - initialMult)}%</style> and ";
             }
+            else if (initialMult > 1f)
+            {
+                description += $"increased by <style=cIsHealing>{100f * (initialMult - 1)}%</style> and ";
+            } 
             else
             {
-                description += $"increased by <style=cIsHealing>{100f * initialMult}%</style> and ";
+                description += $"at their normal values and ";
             }
-            if (loopIncreaseMult < 0)
+            if (loopIncreaseMult < 1f)
             {
-                description += $"decrease by <style=cIsHealth>{100f * loopIncreaseMult}%</style> ";
+                description += $"decrease by <style=cIsHealth>{100f * (1 - loopIncreaseMult)}%</style> ";
             }
+            else if (loopIncreaseMult > 1f)
+            {
+                description += $"increase by <style=cIsHealing>{100f * (loopIncreaseMult - 1)}%</style> ";
+            } 
             else
             {
-                description += $"increase by <style=cIsHealing>{100f * loopIncreaseMult}%</style> ";
+                description += $"stay the same ";
             }
             description += "every loop.";
             LanguageAPI.Add(descriptionToken, description);
@@ -54,7 +62,7 @@ namespace TropicalStorm_Mod
                 self.teamComponent != null && self.teamComponent.teamIndex == TeamIndex.Player)
             {
                 var loopClearCount = (Run.instance) ? Run.instance.loopClearCount : 0;
-                var multiplier = (1f + initialMult) + (loopClearCount * loopIncreaseMult);
+                var multiplier = initialMult * (float)Math.Pow(loopIncreaseMult, loopClearCount);
                 self.acceleration *= multiplier;
                 self.armor *= multiplier;
                 self.attackSpeed *= multiplier;
@@ -72,7 +80,7 @@ namespace TropicalStorm_Mod
                 sender.teamComponent != null && sender.teamComponent.teamIndex == TeamIndex.Player)
             {
                 var loopClearCount = (Run.instance)? Run.instance.loopClearCount: 0;
-                var multiplier = (1f + initialMult) + (loopClearCount * loopIncreaseMult);
+                var multiplier = initialMult * (float)Math.Pow(loopIncreaseMult, loopClearCount);
                 args.healthMultAdd *= multiplier;
             };
         }

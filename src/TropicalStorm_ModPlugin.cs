@@ -20,7 +20,7 @@ namespace TropicalStorm_Mod
             MODNAME = "TropicalStorm_Mod",
             MODAUTHOR = "Mico27",
             MODUID = "com." + MODAUTHOR + "." + MODNAME,
-            MODVERSION = "1.1.0";
+            MODVERSION = "2.0.0";
         // a prefix for name tokens to prevent conflicts
         public const string developerPrefix = MODAUTHOR;
         public void Awake()
