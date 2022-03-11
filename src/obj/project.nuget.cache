@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "lFjkZd7exYn9K1zRCLeIskL0SLaM/uLWb3mvFi6M2Zvuv2VoyOK9ifxxDR4/zNDw1AWrJ+i9G/DbFjdYDEM5Vg==",
+  "success": true,
+  "projectFilePath": "F:\\OldDocuments\\ror2-mODS\\RoR2-TropicalStorm-Mod\\src\\TropicalStorm_Mod.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mfortier\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\mfortier\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
